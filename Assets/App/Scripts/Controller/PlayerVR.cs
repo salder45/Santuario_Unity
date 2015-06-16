@@ -134,7 +134,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
 		{
 			GroundCheck();
 			Vector2 input = GetInput();
-			
 			if ((Mathf.Abs(input.x) > float.Epsilon || Mathf.Abs(input.y) > float.Epsilon) && (advancedSettings.airControl || m_IsGrounded))
 			{
 				// always move along the camera forward as it is the direction that it being aimed at
@@ -148,7 +147,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
 				if (m_RigidBody.velocity.sqrMagnitude <
 				    (movementSettings.CurrentTargetSpeed*movementSettings.CurrentTargetSpeed))
 				{
-					m_RigidBody.AddForce(desiredMove*SlopeMultiplier(), ForceMode.Impulse);
+					//Debug.Log("desiredMove "+desiredMove);
+					//Debug.Log("slopemultiplier "+SlopeMultiplier());
+					//Debug.Log("****  force ****"+(desiredMove*SlopeMultiplier()));
+					//m_RigidBody.AddForce(desiredMove*SlopeMultiplier(), ForceMode.Impulse);
+					m_RigidBody.AddForce(desiredMove, ForceMode.Impulse);
 				}
 			}
 			
@@ -183,6 +186,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 		private float SlopeMultiplier()
 		{
 			float angle = Vector3.Angle(m_GroundContactNormal, Vector3.up);
+			//Debug.Log ("Angle "+angle);
 			return movementSettings.SlopeCurveModifier.Evaluate(angle);
 		}
 
@@ -238,11 +242,13 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			if (Physics.SphereCast(transform.position, m_Capsule.radius, Vector3.down, out hitInfo,
 			                       ((m_Capsule.height/2f) - m_Capsule.radius) + advancedSettings.groundCheckDistance))
 			{
+				//Debug.Log ("GroundContactNormal "+m_GroundContactNormal+" -> True");
 				m_IsGrounded = true;
 				m_GroundContactNormal = hitInfo.normal;
 			}
 			else
 			{
+				//Debug.Log ("GroundContactNormal "+m_GroundContactNormal+" -> False");
 				m_IsGrounded = false;
 				m_GroundContactNormal = Vector3.up;
 			}
